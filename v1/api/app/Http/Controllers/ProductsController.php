@@ -43,17 +43,17 @@ class ProductsController extends Controller
 
         foreach ($get_products as $k => $product) {
             foreach ($product['image']as $key_img => $images){
-                $get_products[$k]['image'][0]['small'] = $simpla->image->resize_modifier($images['filename'],200,200,false,false);
-                $get_products[$k]['image'][0]['medium'] = $simpla->image->resize_modifier($images['filename'],500,500,false,false);
-                $get_products[$k]['image'][0]['large'] = $simpla->image->resize_modifier($images['filename'],800,800,false,false);
-                $get_products[$k]['image'][0]['extra'] = $simpla->image->resize_modifier($images['filename'],1200,1200,false,false);
+                $get_products[$k]['image'][0]['small'] = $simpla->design->resize_modifier($images['filename'],200,200,false,false);
+                $get_products[$k]['image'][0]['medium'] = $simpla->design->resize_modifier($images['filename'],500,500,false,false);
+                $get_products[$k]['image'][0]['large'] = $simpla->design->resize_modifier($images['filename'],800,800,false,false);
+                $get_products[$k]['image'][0]['extra'] = $simpla->design->resize_modifier($images['filename'],1200,1200,false,false);
             }
             foreach ($product['images'] as $key_img_images => $images){
               //  dd($get_products[$k]['images'][$key_img_images]['filename']);
-                $get_products[$k]['images'][$key_img_images]['small'] = $simpla->image->resize_modifier($images['filename'],200,200,false,false);
-                $get_products[$k]['images'][$key_img_images]['medium'] = $simpla->image->resize_modifier($images['filename'],500,500,false,false);
-                $get_products[$k]['images'][$key_img_images]['large'] = $simpla->image->resize_modifier($images['filename'],800,800,false,false);
-                $get_products[$k]['images'][$key_img_images]['extra'] = $simpla->image->resize_modifier($images['filename'],1200,1200,false,false);
+                $get_products[$k]['images'][$key_img_images]['small'] = $simpla->design->resize_modifier($images['filename'],200,200,false,false);
+                $get_products[$k]['images'][$key_img_images]['medium'] = $simpla->design->resize_modifier($images['filename'],500,500,false,false);
+                $get_products[$k]['images'][$key_img_images]['large'] = $simpla->design->resize_modifier($images['filename'],800,800,false,false);
+                $get_products[$k]['images'][$key_img_images]['extra'] = $simpla->design->resize_modifier($images['filename'],1200,1200,false,false);
             }
         }
 
