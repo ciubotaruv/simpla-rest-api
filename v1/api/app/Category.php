@@ -25,5 +25,8 @@ class Category extends Model
      * @var array
      */
 //	protected $hidden = ['password', 'remember_token'];
-
+    public function products()
+    {
+        return $this->hasMany('App\Product', 'product_id');
+    }
 }

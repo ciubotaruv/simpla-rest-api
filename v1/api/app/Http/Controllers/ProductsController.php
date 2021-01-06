@@ -61,7 +61,39 @@ class ProductsController extends Controller
 
     }
 
+    public function getOne($id) {
+
+        $get_product = Product::with(['category', 'brands', 'images', 'variants', 'image'])->where('id',$id)->get()->toArray();
+        return response()->json($get_product, 200);
+
+    }
+
     public function getByID($id)
+    {
+        $product = Product::with(['category', 'brands', 'images', 'variants', 'image'])->where('id', '=', $id)->get()->toArray();
+
+        if ($product != null) {
+            return response()->json($product, 200);
+        } else {
+            return response()->json(['error' => 1, 'message' => 'Unable to find product with ID ' . $id], 400);
+        }
+
+
+    }
+
+    public function getByUrl($url)
+    {
+        $product = Product::with(['category', 'brands', 'images', 'variants', 'image'])->where('url', '=', $url)->get()->toArray();
+
+        if ($product != null) {
+            return response()->json($product, 200);
+        } else {
+            return response()->json(['error' => 1, 'message' => 'Unable to find product with URL ' . $url], 400);
+        }
+
+
+    }
+    public function getByID2($id)
     {
         // Search for a user based on their name.
         $user = Product::query();
@@ -87,19 +119,21 @@ class ProductsController extends Controller
     public function getBrandProduct($id)
     {
         $get_brand = Product::with(['category', 'brands', 'images', 'variants', 'image'])->where('brand_id', '=', $id)->get()->toArray();
-        return response()->json($get_brand);
 
         if ($get_brand != null) {
             return response()->json($get_brand, 200);
         } else {
-            return response()->json(['error' => 1, 'message' => 'Unable to find product with ID ' . $id], 400);
-
+            return response()->json(['error' => 1, 'message' => 'Unable to find product with brand id ' . $id], 400);
         }
     }
 
     public function getCategoryProduct($id)
     {
-        $get_category = Product::with(['category', 'brands', 'images', 'variants', 'image'])->where('category_id', '=', $id)->get();
+
+        $get_category = Product::with(['category', 'brands', 'images', 'variants', 'image'])->whereHas('category_id', function ($query) {
+            return $query->where('category_id', '=', $id);
+        })->get();
+
         return response()->json($get_category);
     }
 

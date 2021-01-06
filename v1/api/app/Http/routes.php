@@ -22,8 +22,10 @@ Route::controllers([
 
 //products
 Route::get('/products','ProductsController@getAll');
+Route::get('/products/id/{id}','ProductsController@getOne');
+
 Route::get('/products/brand_id/{id}','ProductsController@getBrandProduct');
-//Route::get('/product/category_id/{id}','ProductsController@getCategoryProduct');
+Route::get('/product/category_id/{id}','ProductsController@getCategoryProduct');
 
 Route::get('/products/featured/{id}','ProductsController@getFeatured');
 Route::get('/products/visible/{id}','ProductsController@getVisible');
@@ -32,12 +34,17 @@ Route::get('/products/visible/{id}','ProductsController@getVisible');
 //Route::get('/products/has_images/{id}','ProductsController@getById');
 
 Route::get('/product/{id}','ProductsController@getById');
+Route::get('/product/url/{url}','ProductsController@getByUrl');
 
-Route::get('/categories','ProductsController@getAll');
-Route::get('/category/{id}','ProductsController@getById');
+Route::get('/categories','CategoriesController@getAll');
+Route::get('/categories/id/{id}','CategoriesController@getById');
+Route::get('/category/{id}','CategoriesController@getById');
+//Route::get('/category/product_id/{id}','CategoriesController@getByProduct');
 //brands
 Route::get('/brands','BrandsController@getAll');
-Route::get('/brand/{id}','BrandsController@getById');
+Route::get('/brands/id/{id}','BrandsController@getById');
+Route::get('/brands/name/{name}','BrandsController@getByName');
+Route::get('/brands/url/{url}','BrandsController@getByUrl');
 
 //pages
 Route::get('/pages','PagesController@getAll');

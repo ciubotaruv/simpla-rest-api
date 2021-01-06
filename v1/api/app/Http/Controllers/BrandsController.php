@@ -49,4 +49,28 @@ class BrandsController extends Controller
         return response()->json($get_products);
     }
 
+    public function getByName($name)
+    {
+
+        $Brand = Brand::all()->where('name', $name)->toArray();
+        if ($Brand != null) {
+            return response()->json($Brand, 200);
+        } else {
+            return response()->json(['error' => 1, 'message' => 'Unable to find brand with name ' . $name], 400);
+        }
+
+    }
+
+    public function getByUrl($url)
+    {
+
+        $Brand = Brand::all()->where('url', $url)->toArray();
+        if ($Brand != null) {
+            return response()->json($Brand, 200);
+        } else {
+            return response()->json(['error' => 1, 'message' => 'Unable to find brand with url ' . $url], 400);
+        }
+
+    }
+
 }
