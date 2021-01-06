@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Product as Product;
-require_once (BASE_PATH . '/api/Simpla.php');
+use Illuminate\Http\Request;
+
+require_once(BASE_PATH . '/api/Simpla.php');
 
 class ProductsController extends Controller
 {
@@ -42,18 +45,18 @@ class ProductsController extends Controller
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
 
         foreach ($get_products as $k => $product) {
-            foreach ($product['image']as $key_img => $images){
-                $get_products[$k]['image'][0]['small'] = $simpla->design->resize_modifier($images['filename'],200,200,false,false);
-                $get_products[$k]['image'][0]['medium'] = $simpla->design->resize_modifier($images['filename'],500,500,false,false);
-                $get_products[$k]['image'][0]['large'] = $simpla->design->resize_modifier($images['filename'],800,800,false,false);
-                $get_products[$k]['image'][0]['extra'] = $simpla->design->resize_modifier($images['filename'],1200,1200,false,false);
+            foreach ($product['image'] as $key_img => $images) {
+                $get_products[$k]['image'][0]['small'] = $simpla->design->resize_modifier($images['filename'], 200, 200, false, false);
+                $get_products[$k]['image'][0]['medium'] = $simpla->design->resize_modifier($images['filename'], 500, 500, false, false);
+                $get_products[$k]['image'][0]['large'] = $simpla->design->resize_modifier($images['filename'], 800, 800, false, false);
+                $get_products[$k]['image'][0]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
             }
-            foreach ($product['images'] as $key_img_images => $images){
-              //  dd($get_products[$k]['images'][$key_img_images]['filename']);
-                $get_products[$k]['images'][$key_img_images]['small'] = $simpla->design->resize_modifier($images['filename'],200,200,false,false);
-                $get_products[$k]['images'][$key_img_images]['medium'] = $simpla->design->resize_modifier($images['filename'],500,500,false,false);
-                $get_products[$k]['images'][$key_img_images]['large'] = $simpla->design->resize_modifier($images['filename'],800,800,false,false);
-                $get_products[$k]['images'][$key_img_images]['extra'] = $simpla->design->resize_modifier($images['filename'],1200,1200,false,false);
+            foreach ($product['images'] as $key_img_images => $images) {
+                //  dd($get_products[$k]['images'][$key_img_images]['filename']);
+                $get_products[$k]['images'][$key_img_images]['small'] = $simpla->design->resize_modifier($images['filename'], 200, 200, false, false);
+                $get_products[$k]['images'][$key_img_images]['medium'] = $simpla->design->resize_modifier($images['filename'], 500, 500, false, false);
+                $get_products[$k]['images'][$key_img_images]['large'] = $simpla->design->resize_modifier($images['filename'], 800, 800, false, false);
+                $get_products[$k]['images'][$key_img_images]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
             }
         }
 
@@ -61,9 +64,78 @@ class ProductsController extends Controller
 
     }
 
-    public function getOne($id) {
 
-        $get_product = Product::with(['category', 'brands', 'images', 'variants', 'image'])->where('id',$id)->get()->toArray();
+    public function filterProduct(Request $request)
+    {
+        // Search for a user based on their name.
+        $products = Product::with(['category', 'brands', 'images', 'variants', 'image']);
+        // Search for a user based on their company.
+
+        if ($request->has('category_id')) {
+
+            $products->whereHas('category', function ($query) use ($request) {
+                $query->where('category_id', $request->category_id);
+            });
+
+        }
+
+        if ($request->has('brand_id')) {
+            $products->where('brand_id', $request->brand_id);
+        }
+
+        //recommend products 1 or 0
+        if ($request->has('featured')) {
+            $products->where('featured', $request->featured);
+        }
+
+        if ($request->has('variants')) {
+            $products->whereHas('variants', function ($query) use ($request) {
+                $query->where('id', $request->variants);
+            });
+        }
+
+        if ($request->has('sort_by_name')) {
+
+            if ($request->sort_by_name == 'asc') {
+                $products->OrderBy('name', 'asc');
+            }
+
+            if ($request->sort_by_name == 'desc') {
+                $products->OrderBy('name', 'desc');
+            }
+
+        }
+        if ($request->has('sort_by_price')) {
+
+            if ($request->sort_by_price == 'asc') {
+                $products->whereHas('variants', function ($query) use ($request) {
+                    $query->OrderBy('price', 'asc');
+                });
+            }
+
+            if ($request->sort_by_price == 'desc') {
+                $products->whereHas('variants', function ($query) use ($request) {
+                    $query->OrderBy('price', 'desc');
+                });
+            }
+
+        }
+
+        if ($request->has('price')) {
+
+            $products->whereHas('variants', function ($query) use ($request) {
+                $query->where('price', $request->price);
+            });
+        }
+
+        //   return $products->with(['category', 'brands', 'images', 'variants', 'image'])->toSql();
+        return $products->with(['category', 'brands', 'images', 'variants', 'image'])->get();
+    }
+
+    public function getOne($id)
+    {
+
+        $get_product = Product::with(['category', 'brands', 'images', 'variants', 'image'])->where('id', $id)->get()->toArray();
         return response()->json($get_product, 200);
 
     }
@@ -93,6 +165,7 @@ class ProductsController extends Controller
 
 
     }
+
     public function getByID2($id)
     {
         // Search for a user based on their name.

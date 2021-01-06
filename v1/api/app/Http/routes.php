@@ -19,7 +19,9 @@ Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
 ]);
+//filters
 
+Route::get('/filter','ProductsController@filterProduct');
 //products
 Route::get('/products','ProductsController@getAll');
 Route::get('/products/id/{id}','ProductsController@getOne');
