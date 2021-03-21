@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
@@ -34,15 +35,25 @@ class CategoriesController extends Controller
      *
      * @return Response
      */
-    public function getAll()
+    public function getAll(Request $request)
     {
-        $get_products = Category::all()->toArray();
+        $get_products = Category::query();
+
+        if ($request->has('category_id')) {
+            $get_products->where('id', $request->category_id);
+        }
+
+        if ($request->has('parent_id')) {
+            $get_products->where('parent_id', $request->parent_id);
+        }
 
         if ($get_products != null) {
-            return response()->json($get_products, 200);
+            return response()->json($get_products->get(), 200);
         } else {
-            return response()->json(['error' => 1, 'message' => 'Unable to find brand with name ' . $get_products], 400);
+            return response()->json(['error' => 1, 'message' => 'Unable to find this query' . $get_products], 400);
         }
+
+
     }
 
     public function getById($id)
