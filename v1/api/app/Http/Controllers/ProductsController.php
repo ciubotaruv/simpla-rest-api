@@ -211,6 +211,7 @@ class ProductsController extends Controller
 
     public function getBrandProduct($id)
     {
+        $simpla = new \Simpla();
         $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image'])->where('brand_id', '=', $id)->get()->toArray();
 
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
@@ -240,7 +241,7 @@ class ProductsController extends Controller
 
     public function getCategoryProduct($id)
     {
-
+        $simpla = new \Simpla();
         $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image'])->whereHas('category_id', function ($query) {
             return $query->where('category_id', '=', $id);
         })->get();
