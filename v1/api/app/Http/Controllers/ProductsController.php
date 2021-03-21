@@ -38,10 +38,10 @@ class ProductsController extends Controller
      *
      * @return Response
      */
-    public function getAll()
+    public function getAll(Request $request)
     {
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image'])->get()->toArray();
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image'])->get();
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
 
         foreach ($get_products as $k => $product) {
@@ -59,8 +59,12 @@ class ProductsController extends Controller
                 $get_products[$k]['images'][$key_img_images]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
             }
         }
-
-        return response()->json($get_products, 200);
+        if ($request->has('limit')) {
+            return response()->json($get_products->take($request->limit), 200);
+        } else {
+            return response()->json($get_products, 200);
+        }
+        //  return response()->json($get_products, 200);
 
     }
 
