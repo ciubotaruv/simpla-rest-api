@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 
 
-class ProductCategory extends Model  {
+class ProductOptions extends Model  {
 	/**
 	 * The database table used by the model.
 	 *
@@ -26,11 +26,10 @@ class ProductCategory extends Model  {
 //	protected $hidden = ['password', 'remember_token'];
     public function category()
     {
-        return $this->belongsTo('App\Category', 'category_id');
+        return $this->belongsTo('App\Category', 'category');
     }
-    public function products()
-    {
-        return $this->belongsTo('App\Product', 'product_id')->with(['brands', 'images', 'variants', 'image','options']);
-    }
-
+//    public function features()
+//    {
+//        return $this->hasMany('App\Features', 'feature_id');
+//    }
 }

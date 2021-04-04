@@ -35,7 +35,7 @@ Route::get('/products/visible/{id}','ProductsController@getVisible');
 //Route::get('/products/in_stock/{id}','ProductsController@getById');
 //Route::get('/products/has_images/{id}','ProductsController@getById');
 
-Route::get('/product/{id}','ProductsController@getById');
+Route::get('/product/{id}','ProductsController@getOne');
 Route::get('/product/url/{url}','ProductsController@getByUrl');
 
 Route::get('/categories','CategoriesController@getAll');
@@ -69,3 +69,8 @@ Route::post('/order','CartController@insertOrder');
 Route::get('/delivery', 'DeliveryController@getAllDeliveryMethods');
 Route::get('/delivery/{id}', 'DeliveryController@getDeliveryByID');
 Route::get('/paymentmethods', 'PaymentMethodController@getAll');
+//features
+Route::get('/features','FeaturesController@getAll');
+Route::get('/features/id/{id}','FeaturesController@getById');
+Route::get('/features/{id}','FeaturesController@getById');
+Route::get('/product_category','ProductCategoryController@index');

@@ -3,13 +3,13 @@
 use Illuminate\Database\Eloquent\Model;
 
 
-class ProductCategory extends Model  {
+class Features extends Model  {
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 's_products_categories';
+	protected $table = 's_features';
 
 	/**
 	 * The attributes that are mass assignable.
@@ -24,13 +24,5 @@ class ProductCategory extends Model  {
 	 * @var array
 	 */
 //	protected $hidden = ['password', 'remember_token'];
-    public function category()
-    {
-        return $this->belongsTo('App\Category', 'category_id');
-    }
-    public function products()
-    {
-        return $this->belongsTo('App\Product', 'product_id')->with(['brands', 'images', 'variants', 'image','options']);
-    }
 
 }

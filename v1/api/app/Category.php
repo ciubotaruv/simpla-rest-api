@@ -29,4 +29,10 @@ class Category extends Model
     {
         return $this->hasMany('App\Product', 'product_id');
     }
+
+//    public function features()
+//    {
+//        //return $this->hasMany('App\CategoriesFetures', 'product_id');
+//        return $this->hasMany('App\CategoriesFetures','category_id');
+//    }
 }

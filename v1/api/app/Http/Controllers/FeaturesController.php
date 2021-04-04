@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Category;
+use App\Features;
 use Illuminate\Http\Request;
 
-class CategoriesController extends Controller
+class FeaturesController extends Controller
 {
 
     /*
@@ -37,32 +37,28 @@ class CategoriesController extends Controller
      */
     public function getAll(Request $request)
     {
-        $get_products = Category::query();
-
-        if ($request->has('category_id')) {
-            $get_products->where('id', $request->category_id);
-        }
-
-        if ($request->has('parent_id')) {
-            $get_products->where('parent_id', $request->parent_id);
-        }
-
-        if ($get_products != null) {
-            return response()->json($get_products->get(), 200);
-        } else {
-            return response()->json(['error' => 1, 'message' => 'Unable to find this query' . $get_products], 400);
-        }
-
+        $get_products = Features::get();
+//
+//        if ($request->has('category_id')) {
+//            $get_products->where('id', $request->category_id);
+//        }
+//
+//        if ($request->has('parent_id')) {
+//            $get_products->where('parent_id', $request->parent_id);
+//        }
+//
+//        if ($get_products != null) {
+            return response()->json($get_products, 200);
 
     }
 
     public function getById($id)
     {
-        $get_products = Category::with('features')->where('id', '=', $id)->get();
+        $get_products = Features::where('id', '=', $id)->get();
         if ($get_products != null) {
             return response()->json($get_products, 200);
         } else {
-            return response()->json(['error' => 1, 'message' => 'Unable to find category with ID ' . $id], 400);
+            return response()->json(['error' => 1, 'message' => 'Unable to find features with ID ' . $id], 400);
         }
     }
 
