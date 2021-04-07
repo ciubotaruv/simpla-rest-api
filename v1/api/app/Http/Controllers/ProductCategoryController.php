@@ -79,6 +79,7 @@ class ProductCategoryController extends Controller
 
             foreach ($product->products->options as $key => $items) {
                 $all_products_from_category[$k]['products']['options'][$key]['name'] = $items->features->name;
+                $all_products_from_category[$k]['products']['options'][$key]['in_filter'] = $items->features->in_filter;
             }
 
             foreach ($product->products->image as $key_img => $images) {
