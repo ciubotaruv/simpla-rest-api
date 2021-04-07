@@ -23,7 +23,7 @@ class Options extends Model  {
 	 *
 	 * @var array
 	 */
-	protected $hidden = ['product_id', 'features'];
+	protected $hidden = ['product_id'];
     public function features()
     {
         return $this->belongsTo('App\Features', 'feature_id');
