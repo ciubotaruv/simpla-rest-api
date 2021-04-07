@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\ProductCategory as ProductCategory;
 use Illuminate\Http\Request;
+
 require_once(BASE_PATH . '/api/Simpla.php');
+
 class ProductCategoryController extends Controller
 {
 
@@ -47,32 +49,38 @@ class ProductCategoryController extends Controller
             });
             $products_with_only_category->whereHas('category', function ($query) use ($parent_d) {
                 $query->where('category_id', '=', $parent_d);
-            }  );
+            });
 
             $products_with_category_parent->whereHas('category', function ($query) use ($parent_d) {
                 $query->where('parent_id', '=', $parent_d);
             }
             );
         }
-        $get_products = $products_with_category->with(['category','products'])->get();
-        $get_products2 = $products_with_category_parent->with(['category','products'])->get();
-        $get_products3 = $products_with_only_category->with(['category','products'])->get();
+        $get_products = $products_with_category->with(['category', 'products'])->get();
+        $get_products2 = $products_with_category_parent->with(['category', 'products'])->get();
+        $get_products3 = $products_with_only_category->with(['category', 'products'])->get();
         $all_products_from_category = [];
 
-        foreach($get_products as $k => $item) {
+        foreach ($get_products as $k => $item) {
             $all_products_from_category[] = $item;
         }
 
-        foreach($get_products2 as $k => $item) {
+        foreach ($get_products2 as $k => $item) {
             $all_products_from_category[] = $item;
         }
 
-        foreach($get_products3 as $k => $item) {
+        foreach ($get_products3 as $k => $item) {
             $all_products_from_category[] = $item;
         }
-       // dd($all_products_from_category);
+        // dd($all_products_from_category);
         $simpla = new \Simpla();
         foreach ($all_products_from_category as $k => $product) {
+            //dd($product);
+
+            foreach ($product->products->options as $key => $items) {
+                $all_products_from_category[$k]['products']['options'][$key]['name'] = $items->features->name;
+            }
+
             foreach ($product->products->image as $key_img => $images) {
                 $all_products_from_category[$k]['products']['image'][0]['small'] = $simpla->design->resize_modifier($images['filename'], 200, 200, false, false);
                 $all_products_from_category[$k]['products']['image'][0]['medium'] = $simpla->design->resize_modifier($images['filename'], 500, 500, false, false);
@@ -91,8 +99,8 @@ class ProductCategoryController extends Controller
         // $get_products = $products->with(['category','products'])->get();
 
         if ($all_products_from_category != null) {
-           // dd(response()->json($get_products, 200));
-           // return response()->json($get_products, 200);
+            // dd(response()->json($get_products, 200));
+            // return response()->json($get_products, 200);
             return response()->json(array_unique($all_products_from_category), 200);
         } else {
             return response()->json(['error' => 1, 'message' => 'Unable to find this query' . $get_products], 400);

@@ -23,9 +23,9 @@ class Options extends Model  {
 	 *
 	 * @var array
 	 */
-//	protected $hidden = ['password', 'remember_token'];
-    public function featuress()
+	protected $hidden = ['product_id', 'features'];
+    public function features()
     {
-        return $this->hasMany('App\Features', 'features_id');
+        return $this->belongsTo('App\Features', 'feature_id');
     }
 }

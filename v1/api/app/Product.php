@@ -31,7 +31,7 @@ class Product extends Model  {
     }
     public function options()
     {
-        return $this->hasMany('App\Options', 'product_id');
+        return $this->hasMany('App\Options', 'product_id')->with('features');
     }
     public function images()
     {
