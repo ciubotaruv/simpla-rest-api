@@ -1,57 +1,104 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use App\Product as Product;
-use App\Features;
-use App\Category;
+
 use App\ProductCategory as ProductCategory;
-class ProductCategoryController extends Controller {
+use Illuminate\Http\Request;
+require_once(BASE_PATH . '/api/Simpla.php');
+class ProductCategoryController extends Controller
+{
 
-	/*
-	|--------------------------------------------------------------------------
-	| Home Controller
-	|--------------------------------------------------------------------------
-	|
-	| This controller renders your application's "dashboard" for users that
-	| are authenticated. Of course, you are free to change or remove the
-	| controller as you wish. It is just here to get your app started!
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | Home Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller renders your application's "dashboard" for users that
+    | are authenticated. Of course, you are free to change or remove the
+    | controller as you wish. It is just here to get your app started!
+    |
+    */
 
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		//$this->middleware('auth');
-	}
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //$this->middleware('auth');
+    }
 
-	/**
-	 * Show the application dashboard to the user.
-	 *
-	 * @return Response
-	 */
-	public function index(Request $request)
-	{
-        $products = ProductCategory::with(['category','products']);
+    /**
+     * Show the application dashboard to the user.
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        $products_with_category = ProductCategory::with(['category']);
+        $products_with_category_parent = ProductCategory::with(['category']);
+//
+//        $products = ProductCategory::with(['category','products'])->whereHas('category', function($query) {
+//            $query->where('parent_id', '=', 2); }
+//        )->get();
+
+//        if ($request->has('category_id')) {
+//            $products->where('category_id', $request->category_id)->where();
+//        }
+
 
         if ($request->has('category_id')) {
-            $products->where('category_id', $request->category_id);
+            $parent_d = $request->category_id;
+            $products_with_category->whereHas('category', function ($query) use ($parent_d) {
+                $query->where('category_id', '=', $parent_d)->where('parent_id', '=', 0);
+            });
+            $products_with_category_parent->whereHas('category', function ($query) use ($parent_d) {
+                $query->where('parent_id', '=', $parent_d);
+            }
+            );
+        }
+        $get_products = $products_with_category->with(['category','products'])->get();
+        $get_products2 = $products_with_category_parent->with(['category','products'])->get();
+        $all_products_from_category = [];
+        foreach($get_products as $k => $item) {
+            $all_products_from_category[] = $item;
         }
 
-//        if ($request->has('parent_id')) {
-//            $get_products->where('parent_id', $request->parent_id);
-//        }
-        $get_products = $products->with(['category','products'])->get();
-        if ($get_products != null) {
-            return response()->json($get_products, 200);
+        foreach($get_products2 as $k => $item) {
+            $all_products_from_category[] = $item;
+        }
+
+        $simpla = new \Simpla();
+        foreach ($all_products_from_category as $k => $product) {
+               // dd($product->products->images );
+            foreach ($product->products->images as $key_img => $images) {
+                $all_products_from_category[$k]['products']['image'][0]['small'] = $simpla->design->resize_modifier($images['filename'], 200, 200, false, false);
+                $all_products_from_category[$k]['products']['image'][0]['medium'] = $simpla->design->resize_modifier($images['filename'], 500, 500, false, false);
+                $all_products_from_category[$k]['products']['image'][0]['large'] = $simpla->design->resize_modifier($images['filename'], 800, 800, false, false);
+                $all_products_from_category[$k]['products']['image'][0]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
+            }
+            foreach ($product->products->images as $key_img_images => $images) {
+                //  dd($get_products[$k]['images'][$key_img_images]['filename']);
+                $all_products_from_category[$k]['products']['images'][$key_img_images]['small'] = $simpla->design->resize_modifier($images['filename'], 200, 200, false, false);
+                $all_products_from_category[$k]['products']['images'][$key_img_images]['medium'] = $simpla->design->resize_modifier($images['filename'], 500, 500, false, false);
+                $all_products_from_category[$k]['products']['images'][$key_img_images]['large'] = $simpla->design->resize_modifier($images['filename'], 800, 800, false, false);
+                $all_products_from_category[$k]['products']['images'][$key_img_images]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
+            }
+        }
+      //  dd($all_products_from_category);
+
+        // $get_products = $products->with(['category','products'])->get();
+
+        if ($all_products_from_category != null) {
+           // dd(response()->json($get_products, 200));
+           // return response()->json($get_products, 200);
+            return response()->json($all_products_from_category, 200);
         } else {
             return response()->json(['error' => 1, 'message' => 'Unable to find this query' . $get_products], 400);
         }
-
-		//return view('home');
-	}
+        //return response()->json($products, 200);
+        //return view('home');
+    }
 
 }
