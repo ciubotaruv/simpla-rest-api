@@ -234,7 +234,7 @@ class ProductsController extends Controller
     public function getBrandProduct($id)
     {
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image','options'])->where('brand_id', '=', $id)->get()->toArray();
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('brand_id', '=', $id)->get()->toArray();
 
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
 
@@ -251,6 +251,11 @@ class ProductsController extends Controller
                 $get_products[$k]['images'][$key_img_images]['medium'] = $simpla->design->resize_modifier($images['filename'], 500, 500, false, false);
                 $get_products[$k]['images'][$key_img_images]['large'] = $simpla->design->resize_modifier($images['filename'], 800, 800, false, false);
                 $get_products[$k]['images'][$key_img_images]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
+            }
+
+            foreach ($product['options'] as $key => $items) {
+                $get_products[$k]['options'][$key]['name'] = $items['features']['name'];
+                $get_products[$k]['options'][$key]['in_filter'] = $items['features']['in_filter'];
             }
         }
 
