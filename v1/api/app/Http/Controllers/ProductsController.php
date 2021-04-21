@@ -72,12 +72,12 @@ class ProductsController extends Controller
     public function filterProduct(Request $request)
     {
 
+
         // Search for a user based on their name.
         $products = Product::with(['category', 'brands', 'images', 'variants', 'image','options']);
         // Search for a user based on their company.
 
         if ($request->has('category_id')) {
-
             $products->whereHas('category', function ($query) use ($request) {
                 $query->where('category_id', $request->category_id);
             });
@@ -85,7 +85,8 @@ class ProductsController extends Controller
         }
 
         if ($request->has('brand_id')) {
-            $products->where('brand_id', $request->brand_id);
+            $brands_id = explode(',',$request->brand_id);
+            $products->whereIn('brand_id', $brands_id);
         }
 
         //recommend products 1 or 0
