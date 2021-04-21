@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Options;
+use Illuminate\Http\Request;
 
 class OptionsController extends Controller
 {
@@ -34,19 +35,35 @@ class OptionsController extends Controller
      *
      * @return Response
      */
-    public function getAll()
+    public function getAll(Request $request)
     {
-        $get_products = Options::all()->toArray();
-        //$get_products = Brand::lists('name');
-        return response()->json($get_products);
+        $get_products = Options::query();
 
-        //	return view('welcome');
+        if ($request->has('feature_id')) {
+            $get_products->where('feature_id', $request->feature_id);
+        }
+
+        if ($get_products != null) {
+            return response()->json($get_products->get(), 200);
+        } else {
+            return response()->json(['error' => 1, 'message' => 'Unable to find this query' . $get_products], 400);
+        }
     }
 
-    public function getById($id)
+    public function getById(Request $request)
     {
-        $get_products = Options::where('id', '=', $id)->get();
-        return response()->json($get_products);
+        $get_products = Options::query();
+
+        if ($request->has('feature_id')) {
+            $get_products->where('feature_id', $request->feature_id);
+        }
+
+        if ($get_products != null) {
+            return response()->json($get_products->get(), 200);
+        } else {
+            return response()->json(['error' => 1, 'message' => 'Unable to find this query' . $get_products], 400);
+        }
+
     }
 
     public function getByName($name)
