@@ -48,6 +48,12 @@ Route::get('/brands/id/{id}','BrandsController@getById');
 Route::get('/brands/name/{name}','BrandsController@getByName');
 Route::get('/brands/url/{url}','BrandsController@getByUrl');
 
+//Options
+Route::get('/options','OptionsController@getAll');
+Route::get('/options/id/{id}','OptionsController@getById');
+Route::get('/options/value/{name}','OptionsController@getByName');
+
+
 //pages
 Route::get('/pages','PagesController@getAll');
 Route::get('/page/{id}','PagesController@getById');
