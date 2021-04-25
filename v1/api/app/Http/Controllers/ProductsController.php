@@ -269,13 +269,15 @@ class ProductsController extends Controller
             $take = isset($limit[1]);
 
             if (!$take){
-                return response()->json($get_products->take($skip), 200);
+                $count = $get_products->take($skip);
+                return response()->json(count($count), 200);
             } else{
                 $take = $limit[1];
-                return response()->json($get_products->slice($skip)->take($take), 200);
+                $count = $get_products->slice($skip)->take($take);
+                return response()->json(count($count), 200);
             }
         } else {
-            return response()->json($get_products, 200);
+            return response()->json(count($get_products), 200);
         }
     }
 
