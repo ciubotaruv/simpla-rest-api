@@ -157,7 +157,22 @@ class ProductsController extends Controller
                 $get_products[$k]['images'][$key_img_images]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
             }
         }
-        return response()->json($get_products, 200);
+
+
+        if ($request->has('limit')) {
+            $limit = explode(',', $request->limit);
+           $skip = $limit[0];
+           $take = isset($limit[1]);
+
+           if (!$take){
+               return response()->json($get_products->take($skip), 200);
+           } else{
+               return response()->json($get_products->slice($skip)->take($take), 200);
+           }
+        } else {
+            return response()->json($get_products, 200);
+        }
+       // return response()->json($get_products->slice(4)->take(1), 200);
     }
     public function countProduct(Request $request)
     {
