@@ -41,7 +41,7 @@ class ProductsController extends Controller
     public function getAll(Request $request)
     {
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image','options'])->get();
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->get();
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
 
         foreach ($get_products as $k => $product) {
@@ -74,7 +74,7 @@ class ProductsController extends Controller
 
 
         // Search for a user based on their name.
-        $products = Product::with(['category', 'brands', 'images', 'variants', 'image','options']);
+        $products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options']);
         // Search for a user based on their company.
 
         if ($request->has('category_id')) {
@@ -83,9 +83,16 @@ class ProductsController extends Controller
             });
 
         }
+        if ($request->has('name')) {
+            $options_name = explode(',', $request->name);
+            $products->whereHas('options', function ($query) use ($options_name) {
+                $query->whereIn('value', $options_name);
+            });
+
+        }
 
         if ($request->has('brand_id')) {
-            $brands_id = explode(',',$request->brand_id);
+            $brands_id = explode(',', $request->brand_id);
             $products->whereIn('brand_id', $brands_id);
         }
 
@@ -159,7 +166,7 @@ class ProductsController extends Controller
     {
 
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image','options'])->where('id', $id)->get()->toArray();
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('id', $id)->get()->toArray();
 
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
 
@@ -185,7 +192,7 @@ class ProductsController extends Controller
 
     public function getByID($id)
     {
-        $product = Product::with(['category', 'brands', 'images', 'variants', 'image','options'])->where('id', '=', $id)->get()->toArray();
+        $product = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('id', '=', $id)->get()->toArray();
 
         if ($product != null) {
             return response()->json($product, 200);
@@ -198,7 +205,7 @@ class ProductsController extends Controller
 
     public function getByUrl($url)
     {
-        $product = Product::with(['category', 'brands', 'images', 'variants', 'image','options'])->where('url', '=', $url)->get()->toArray();
+        $product = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('url', '=', $url)->get()->toArray();
 
         if ($product != null) {
             return response()->json($product, 200);
@@ -270,7 +277,7 @@ class ProductsController extends Controller
     public function getCategoryProduct($id)
     {
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image','options'])->whereHas('category_id', function ($query) {
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->whereHas('category_id', function ($query) {
             return $query->where('category_id', '=', $id);
         })->get();
 
@@ -296,13 +303,13 @@ class ProductsController extends Controller
 
     public function getFeatured($id)
     {
-        $get_featured = Product::with(['category', 'brands', 'images', 'variants', 'image','options'])->where('featured', '=', $id)->get();
+        $get_featured = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('featured', '=', $id)->get();
         return response()->json($get_featured);
     }
 
     public function getVisible($id)
     {
-        $get_visible = Product::with(['category', 'brands', 'images', 'variants', 'image','options'])->where('visible', '=', $id)->get();
+        $get_visible = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('visible', '=', $id)->get();
         return response()->json($get_visible);
     }
 
