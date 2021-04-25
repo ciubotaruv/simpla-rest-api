@@ -167,6 +167,7 @@ class ProductsController extends Controller
            if (!$take){
                return response()->json($get_products->take($skip), 200);
            } else{
+               $take = $limit[1];
                return response()->json($get_products->slice($skip)->take($take), 200);
            }
         } else {
@@ -270,6 +271,7 @@ class ProductsController extends Controller
             if (!$take){
                 return response()->json($get_products->take($skip), 200);
             } else{
+                $take = $limit[1];
                 return response()->json($get_products->slice($skip)->take($take), 200);
             }
         } else {
