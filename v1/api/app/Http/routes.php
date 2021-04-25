@@ -22,6 +22,7 @@ Route::controllers([
 //filters
 
 Route::get('/filter','ProductsController@filterProduct');
+Route::get('/count','ProductsController@countProduct');
 //products
 Route::get('/products','ProductsController@getAll');
 Route::get('/products/id/{id}','ProductsController@getOne');
