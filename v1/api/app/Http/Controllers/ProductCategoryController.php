@@ -56,6 +56,9 @@ class ProductCategoryController extends Controller
             }
             );
         }
+
+
+
         $get_products = $products_with_category->with(['category', 'products'])->get();
         $get_products2 = $products_with_category_parent->with(['category', 'products'])->get();
         $get_products3 = $products_with_only_category->with(['category', 'products'])->get();
@@ -72,6 +75,13 @@ class ProductCategoryController extends Controller
         foreach ($get_products3 as $k => $item) {
             $all_products_from_category[] = $item;
         }
+
+        if ($request->has('brand_id')) {
+            $all_products_from_category->whereHas('products', function ($query) use ($request) {
+                $query->where('brand_id', $request->brand_id);
+            });
+        }
+
         // dd($all_products_from_category);
         $simpla = new \Simpla();
         foreach ($all_products_from_category as $k => $product) {
