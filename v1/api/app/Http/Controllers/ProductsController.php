@@ -189,6 +189,17 @@ class ProductsController extends Controller
 
     public function countProduct(Request $request)
     {
+        parse_str($_SERVER['QUERY_STRING'], $get_array);
+        $all_feature_id = [];
+        $all_feature_value = [];
+
+        foreach ($get_array as $k => $item) {
+            if (gettype($k) == 'integer') {
+                $all_feature_id[] = $k;
+                $all_feature_value[] = $item;
+            }
+        }
+
         // Search for a user based on their name.
         $products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options']);
         // Search for a user based on their company.
@@ -199,6 +210,13 @@ class ProductsController extends Controller
             });
 
         }
+
+        if ($all_feature_id != null && $all_feature_value != null) {
+            $products->whereHas('options', function ($query) use ($all_feature_value, $all_feature_id) {
+                $query->whereIn('feature_id', $all_feature_id)->whereIn('value', $all_feature_value);
+            });
+        }
+
         if ($request->has('name')) {
             $options_name = explode(',', $request->name);
             $products->whereHas('options', function ($query) use ($options_name) {
