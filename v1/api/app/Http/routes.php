@@ -81,3 +81,5 @@ Route::get('/features','FeaturesController@getAll');
 Route::get('/features/id/{id}','FeaturesController@getById');
 Route::get('/features/{id}','FeaturesController@getById');
 Route::get('/product_category','ProductCategoryController@index');
+
+Route::get('/search','ProductsController@search');

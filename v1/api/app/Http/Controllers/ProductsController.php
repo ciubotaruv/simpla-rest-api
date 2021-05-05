@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Product as Product;
 use Illuminate\Http\Request;
 
+
 require_once(BASE_PATH . '/api/Simpla.php');
 
 class ProductsController extends Controller
@@ -41,7 +42,7 @@ class ProductsController extends Controller
     public function getAll(Request $request)
     {
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->get();
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related'])->get();
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
 
         foreach ($get_products as $k => $product) {
@@ -85,7 +86,7 @@ class ProductsController extends Controller
 
         //  dd($_SERVER['QUERY_STRING']);
         // Search for a user based on their name.
-        $products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options']);
+        $products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related']);
         // Search for a user based on their company.
 
         if ($request->has('category_id')) {
@@ -201,7 +202,7 @@ class ProductsController extends Controller
         }
 
         // Search for a user based on their name.
-        $products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options']);
+        $products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related']);
         // Search for a user based on their company.
 
         if ($request->has('category_id')) {
@@ -316,7 +317,7 @@ class ProductsController extends Controller
     {
 
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('id', $id)->get()->toArray();
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related'])->where('id', $id)->get()->toArray();
 
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
 
@@ -342,7 +343,7 @@ class ProductsController extends Controller
 
     public function getByID($id)
     {
-        $product = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('id', '=', $id)->get()->toArray();
+        $product = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related'])->where('id', '=', $id)->get()->toArray();
 
         if ($product != null) {
             return response()->json($product, 200);
@@ -355,7 +356,7 @@ class ProductsController extends Controller
 
     public function getByUrl($url)
     {
-        $product = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('url', '=', $url)->get()->toArray();
+        $product = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related'])->where('url', '=', $url)->get()->toArray();
 
         if ($product != null) {
             return response()->json($product, 200);
@@ -392,7 +393,7 @@ class ProductsController extends Controller
     public function getBrandProduct($id)
     {
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('brand_id', '=', $id)->get()->toArray();
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related'])->where('brand_id', '=', $id)->get()->toArray();
 
         $path = $_SERVER['HTTP_HOST'] . '/files/products/';
 
@@ -427,7 +428,7 @@ class ProductsController extends Controller
     public function getCategoryProduct($id)
     {
         $simpla = new \Simpla();
-        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->whereHas('category_id', function ($query) {
+        $get_products = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related'])->whereHas('category_id', function ($query) {
             return $query->where('category_id', '=', $id);
         })->get();
 
@@ -453,15 +454,52 @@ class ProductsController extends Controller
 
     public function getFeatured($id)
     {
-        $get_featured = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('featured', '=', $id)->get();
+        $get_featured = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related'])->where('featured', '=', $id)->get();
         return response()->json($get_featured);
     }
 
     public function getVisible($id)
     {
-        $get_visible = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options'])->where('visible', '=', $id)->get();
+        $get_visible = Product::with(['category', 'brands', 'images', 'variants', 'image', 'options','related'])->where('visible', '=', $id)->get();
         return response()->json($get_visible);
     }
 
+    public function search(Request $request)
+    {
 
+        $search = $request->search;
+        // Search for a user based on their name.
+        $get_products = Product::with(['category', 'brands' => function($query) use ($search){
+            $query->where('name', 'like', '%'.$search.'%');
+        }, 'images', 'variants', 'image', 'options','related'])
+            ->where("name", "like", '%'.$search.'%')
+//            ->whereHas('brands', function($q) use ($search) {
+//                $q->where("name", "like", $search);
+//                    })
+            ->get()
+            ->toArray();
+
+
+
+        //   return $products->with(['category', 'brands', 'images', 'variants', 'image'])->toSql();
+        //$get_products = $products->with(['category', 'brands', 'images', 'variants', 'image'])->get();
+        $simpla = new \Simpla();
+        foreach ($get_products as $k => $product) {
+            foreach ($product['image'] as $key_img => $images) {
+                $get_products[$k]['image'][0]['small'] = $simpla->design->resize_modifier($images['filename'], 200, 200, false, false);
+                $get_products[$k]['image'][0]['medium'] = $simpla->design->resize_modifier($images['filename'], 500, 500, false, false);
+                $get_products[$k]['image'][0]['large'] = $simpla->design->resize_modifier($images['filename'], 800, 800, false, false);
+                $get_products[$k]['image'][0]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
+            }
+            foreach ($product['images'] as $key_img_images => $images) {
+                //  dd($get_products[$k]['images'][$key_img_images]['filename']);
+                $get_products[$k]['images'][$key_img_images]['small'] = $simpla->design->resize_modifier($images['filename'], 200, 200, false, false);
+                $get_products[$k]['images'][$key_img_images]['medium'] = $simpla->design->resize_modifier($images['filename'], 500, 500, false, false);
+                $get_products[$k]['images'][$key_img_images]['large'] = $simpla->design->resize_modifier($images['filename'], 800, 800, false, false);
+                $get_products[$k]['images'][$key_img_images]['extra'] = $simpla->design->resize_modifier($images['filename'], 1200, 1200, false, false);
+            }
+        }
+            return response()->json($get_products, 200);
+
+    }
 }

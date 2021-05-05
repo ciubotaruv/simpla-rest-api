@@ -41,6 +41,10 @@ class Product extends Model  {
     {
         return $this->hasMany('App\Image', 'product_id')->where('position', 0);
     }
+    public function related()
+    {
+        return $this->hasMany('App\RelatedProducts', 'product_id')->with('product');
+    }
     public function variants()
     {
         return $this->hasMany('App\Variant', 'product_id');
