@@ -3,15 +3,17 @@
 use Illuminate\Database\Eloquent\Model;
 
 
-class RelatedProducts extends Model  {
-    /**
+class Comment extends Model  {
+	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 's_related_products';
+	protected $table = 's_comments';
+    public $timestamps = false;
 
-	/**
+
+    /**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
@@ -24,8 +26,5 @@ class RelatedProducts extends Model  {
 	 * @var array
 	 */
 //	protected $hidden = ['password', 'remember_token'];
-    public function product()
-    {
-        return $this->belongsTo('App\Product', 'related_id')->with(['brands', 'images', 'variants', 'image','options']);
-    }
+
 }

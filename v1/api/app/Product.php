@@ -54,7 +54,10 @@ class Product extends Model  {
     {
         return $this->belongsTo('App\Brand', 'brand_id');
     }
+    public function comments(){
 
+        return $this->hasMany('App\Comment','object_id');
+    }
     public function scopePopular($query, $id)
     {
         if ($id != null) {

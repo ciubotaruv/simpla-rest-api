@@ -83,3 +83,11 @@ Route::get('/features/{id}','FeaturesController@getById');
 Route::get('/product_category','ProductCategoryController@index');
 
 Route::get('/search','ProductsController@search');
+
+//coments
+
+Route::get('/comments/{id}','CommentsController@getOne');
+Route::get('/comments','CommentsController@getAll');
+Route::get('/count_comments','CommentsController@getCount');
+Route::get('/add_comment','CommentsController@addComment');
+Route::get('/delete_comment/{id}','CommentsController@deleteComment');
